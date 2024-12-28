@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard</title>
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --secondary-color: #f44336;
+      --background-color: #f5f5f5;
+      --text-color: #333;
+      --notification-color: #ffeb3b;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: var(--background-color);
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: var(--primary-color);
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    header .logout-btn {
+      background: var(--secondary-color);
+      padding: 0.8rem 1.5rem;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    header .logout-btn:hover {
+      background: #e53935;
+    }
+
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin: 20px;
+    }
+
+    .section {
+      flex: 1 1 45%;
+      margin: 10px;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .section h2 {
+      margin-top: 0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #333;
+      color: white;
+      margin-top: 2rem;
+    }
+
+    .product, .cart-item, .order-history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .notification {
+      background: var(--notification-color);
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+      display: none; /* Hidden by default */
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column; /* Stack sections vertically */
+      }
+
+      .section {
+        width: 100%; /* Full width on small screens */
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Customer Dashboard</h1>
+    <button class="logout-btn" aria-label="Logout" onclick="logout()">Logout</button>
+  </header>
+
+  <div class="container">
+    <div class="notification" id="notification"></div>
+
+    <!-- Wallet Section -->
+    <div class="section">
+      <h2>Wallet Balance</h2>
+      <p id="walletBalance">$100</p>
+    </div>
+
+    <!-- Shopping Section -->
+    <div class="section">
+      <h2>Product List</h2>
+      <div class="product">
+        <span>Product 1 - $20</span>
+        <button onclick="addToCart('Product 1', 20)">Add to Cart</button>
+      </div>
+      <div class="product">
+        <span>Product 2 - $30</span>
+        <button onclick="addToCart('Product 2', 30)">Add to Cart</button>
+      </div>
+      <div class="product">
+        <span>Product 3 - $15</span>
+        <button onclick="addToCart('Product 3', 15)">Add to Cart</button>
+      </div>
+    </div>
+
+    <!-- Cart Section -->
+    <div class="section" id="cartSection">
+      <h2>Cart</h2>
+      <ul id="cartItems"></ul>
+      <button onclick="placeOrder()">Place Order</button>
+    </div>
+
+    <!-- Order History Section -->
+    <div class="section">
+      <h2>Order History</h2>
+      <ul id="orderHistory">
+        <li class="order-history-item">Order #1 - Product 1, Product 2 - $50</li>
+    </div>
+  </div>
+        
+  <footer>
+    <p>&copy; 2024 Delivery Management System. All Rights Reserved.</p>
+  </footer>
+
+  <script>
+    let cart = [];
+    let walletBalance = 100;
+
+    // Function to add items to the cart
+    function addToCart(productName, price) {
+      cart.push({ productName, price });
+      updateCart();
+    }
+
+    // Function to update the cart section
+    function updateCart() {
+      const cartItemsList = document.getElementById('cartItems');
+      cartItemsList.innerHTML = '';
+      cart.forEach((item, index) => {
+        const li = document.createElement('li');
+        li.classList.add('cart-item');
+        li.innerHTML = `${item.productName} - $${item.price} <button onclick="removeFromCart(${index})">Remove</button>`;
+        cartItemsList.appendChild(li);
+      });
+    }
+
+    // Function to remove items from the cart
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCart();
+    }
+
+    // Function to place an order
+    function placeOrder() {
+      if (cart.length === 0) {
+        alert('Your cart is empty.');
+        return;
+      }
+
+      const totalAmount = cart.reduce((total, item) => total + item.price, 0);
+      if (walletBalance < totalAmount) {
+        alert('Insufficient wallet balance. Please recharge your wallet.');
+        return;
+      }
+
+      // Update wallet balance
+      walletBalance -= totalAmount;
+      document.getElementById('walletBalance').textContent = `$${walletBalance}`;
+
+      // Add to order history
+      const orderDetails = cart.map(item => item.productName).join(', ');
+      const orderHistory = document.getElementById('orderHistory');
+      const newOrder = document.createElement('li');
+      newOrder.classList.add('order-history-item');
+      newOrder.textContent = `Order - ${orderDetails} - $${totalAmount}`;
+      orderHistory.appendChild(newOrder);
+
+      // Clear the cart after placing the order
+      cart = [];
+      updateCart();
+
+      alert('Order placed successfully!');
+    }
+
+    // Function to handle logout and redirect to home.html
+    function logout() {
+      // Simulate user logout (clear session or storage if needed)
+      alert('Logging out...');
+      window.location.href = 'home.html'; // Redirect to home page
+    }
+  </script>
+
+</body>
+</html>

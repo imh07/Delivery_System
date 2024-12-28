@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Person Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: #4CAF50;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      margin: 0;
+    }
+
+    header .logout-btn {
+      background: #f44336;
+      padding: 0.8rem 1.5rem;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    header .logout-btn:hover {
+      background: #e53935;
+    }
+
+    main {
+      max-width: 800px;
+      margin: 2rem auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+    }
+
+    h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .order {
+      border-bottom: 1px solid #ddd;
+      padding: 1rem 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .order:last-child {
+      border-bottom: none;
+    }
+
+    .order-actions button {
+      margin-left: 10px;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .verify-btn {
+      background: #FF9800;
+      color: white;
+    }
+
+    .verify-btn:hover {
+      background: #F57C00;
+    }
+
+    .out-for-delivery-btn {
+      background: #2196F3;
+      color: white;
+    }
+
+    .out-for-delivery-btn:hover {
+      background: #1976D2;
+    }
+
+    .delivered-btn {
+      background: #4CAF50;
+      color: white;
+    }
+
+    .delivered-btn:hover {
+      background: #388E3C;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #333;
+      color: white;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Delivery Person Dashboard</h1>
+  <button class="logout-btn" onclick="logout()">Logout</button>
+</header>
+
+<main>
+  <h2>Pending Orders</h2>
+  <div id="ordersList">
+    <!-- Orders will be dynamically rendered here -->
+  </div>
+</main>
+
+<footer>
+  <p>&copy; 2024 Delivery Management System. All Rights Reserved.</p>
+</footer>
+
+<script>
+  // Sample pending orders data (replace with real data in production)
+  const pendingOrders = [
+    { id: 1, product: "Laptop", customer: "John Doe", address: "123 Main St" },
+    { id: 2, product: "Mobile Phone", customer: "Jane Smith", address: "456 Elm St" },
+    { id: 3, product: "Book", customer: "Bob Brown", address: "789 Oak St" },
+  ];
+
+  const ordersList = document.getElementById("ordersList");
+
+  // Render orders dynamically
+  function renderOrders() {
+    ordersList.innerHTML = "";
+    pendingOrders.forEach((order) => {
+      const orderDiv = document.createElement("div");
+      orderDiv.classList.add("order");
+      orderDiv.innerHTML = `
+        <div>
+          <p><strong>Product:</strong> ${order.product}</p>
+          <p><strong>Customer:</strong> ${order.customer}</p>
+          <p><strong>Address:</strong> ${order.address}</p>
+        </div>
+        <div class="order-actions">
+          <button class="verify-btn" onclick="verifyOrder(${order.id})">Verify</button>
+          <button class="out-for-delivery-btn" onclick="markOutForDelivery(${order.id})">Out for Delivery</button>
+          <button class="delivered-btn" onclick="markDelivered(${order.id})">Delivered</button>
+        </div>
+      `;
+      ordersList.appendChild(orderDiv);
+    });
+  }
+
+  // Order action functions
+  function verifyOrder(orderId) {
+    alert(`Order #${orderId} has been verified.`);
+  }
+
+  function markOutForDelivery(orderId) {
+    alert(`Order #${orderId} is now "Out for Delivery".`);
+  }
+
+  function markDelivered(orderId) {
+    alert(`Order #${orderId} has been marked as "Delivered".`);
+    removeOrder(orderId);
+  }
+
+  // Remove order from the list after delivery
+  function removeOrder(orderId) {
+    const index = pendingOrders.findIndex((order) => order.id === orderId);
+    if (index !== -1) {
+      pendingOrders.splice(index, 1);
+      renderOrders(); // Re-render the list
+    }
+  }
+
+  // Logout function
+  function logout() {
+    alert("Logging out...");
+    window.location.href = "home.html"; // Redirect to home page
+  }
+
+  // Initial render
+  renderOrders();
+</script>
+
+</body>
+</html>
